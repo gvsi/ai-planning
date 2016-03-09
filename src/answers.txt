@@ -3,34 +3,40 @@
 -----------------------------------------------------------------------
  
  Write here you matriculation number (only - your name is not needed)
- Matriculation Number: s_______
+ Matriculation Number: s1448512
  
-1.1)
+1.1) DropOff(D), ParkingLot(Pl), PickUp(P), Connected(D, Pl), Connected(P,Pl), Car(C), Agent(A)
 
+1.2) To keep track of the location of the agent or of a car, I can have a predicate “In” taking two arguments: the subject and the location. For example, I can have Car(C) and DropOff(D) and In(C, D) indicating a state where there’s a car C located in the drop-off point D. Or Agent(A) and ParkingLot(Pl) and In(A, Pl) indicating that the agent A is in the parking lot.
 
-1.2)
+1.3) I can have the following predicates to describe the following states for a parked and delivered car respectively: Parked(C), Delivered(C), where C is a Car.
 
-
-1.3)
-
-
-1.4)
-
-
+1.4) DropOff(D) and ParkingLot(Pl) and PickUp(P) and Connected(D, Pl) and Connected(Pl, P) and Car(C) and Agent(A) and In(C, D) and In(A, D) and (not Parked(C)) and (not Delivered(C)) ?????
+	
 1.5)
-
+Action(Move(A, from, to),
+PRECONDITION: In(A, from) and (Connected(to, from) or Connected(from, to)),
+EFFECT: In(A, to)
 
 1.6)
-
+Action(Park(A, C, Pl)),
+PRECONDITION: ParkingLot(Pl) and In(A, Pl) and In(C, Pl) and (not Parked(C)),
+EFFECT: Parked(C))
 
 1.7)
+Action(Drive(A, C, from, to)),
+PRECONDITION: In(A, from) and In(C, from) and (Connected(to, from) or Connected(from, to)),
+EFFECT: In(A, to) and In(C, from) and (not Parked(C))
 
-
-1.8)
+1.8) 
+Action(Deliver(A, C, P)),
+PRECONDITION: PickUp(P) and In(A, P) and In(C, P),
+EFFECT: Delivered(C))
 
 
 1.9)
-
+The successor-state axiom solves the so-called frame problem. The frame problem refers to how effect axioms fail to state what remains unchanged as the result of an action.
+There are formalisms that are based on the assumption that all that is not explicitly changed by an action remains unchanged, which effectively fixes the frame problem.
 
 1.10)
 
