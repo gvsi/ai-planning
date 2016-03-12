@@ -1,37 +1,37 @@
 -----------------------------------------------------------------------
  ------ Informatics 2D - 2015/16 - Second Assignment - Planning ------
 -----------------------------------------------------------------------
- 
+
  Write here you matriculation number (only - your name is not needed)
  Matriculation Number: s1448512
- 
-1.1) DropOff(D), ParkingLot(Pl), PickUp(P), Connected(D, Pl), Connected(Pl, D), Connected(P,Pl), Connected(Pl, P), Car(C), Agent(A)
 
-1.2) To keep track of the location of the agent or of a car, I can have a predicate “In” taking two arguments: the subject and the location. For example, I can have Car(C) and DropOff(D) and In(C, D) indicating a state where there’s a car C located in the drop-off point D. Or Agent(A) and ParkingLot(Pl) and In(A, Pl) indicating that the agent A is in the parking lot.
+1.1) Connected(DropOff, ParkingLot), Connected(ParkingLot, DropOff), Connected(PickUp, ParkingLot), Connected(ParkingLot, PickUp)
 
-1.3) I can have the following predicates to describe the following states for a parked and delivered car respectively: Parked(C), Delivered(C), where C is a Car.
+1.2) To keep track of the location of the agent or of a car, I can have a predicate “In” taking two arguments: the subject and the location. For example, I can have In(Car, DropOff) indicating a state where the Car is located in the drop-off point D. Or In(Agent, ParkingLot) indicating that the Agent is in the parking lot.
 
-1.4) DropOff(D) and ParkingLot(Pl) and PickUp(P) and Connected(D, Pl) and Connected(Pl, D) and Connected(Pl, P) and Connected(P, Pl) and Car(C) and Agent(A) and In(C, D) and In(A, D) and (not Parked(C)) and (not Delivered(C)) ?????
+1.3) I can have the following predicates to describe the following states for a parked and delivered car respectively: Parked(Car), Delivered(Car).
+
+1.4) Connected(DropOff, ParkingLot) and Connected(ParkingLot, DropOff) and Connected(ParkingLot, PickUp) and Connected(PickUp, ParkingLot) and In(Car, DropOff) and In(Agent, DropOff) and (not Parked(Car)) and (not Delivered(Car)) ?????
 
 1.5)
-Action(Move(A, from, to),
-PRECONDITION: In(A, from) and Connected(to, from),
-EFFECT: In(A, to) and (not In(A, from))
+Action(Move(from, to),
+PRECONDITION: In(Agent, from) and Connected(to, from),
+EFFECT: In(Agent, to) and (not In(Agent, from))
 
 1.6)
-Action(Park(A, C, Pl)),
-PRECONDITION: ParkingLot(Pl) and In(A, Pl) and In(C, Pl) and (not Parked(C)),
-EFFECT: Parked(C))
+Action(Park(Car)),
+PRECONDITION: In(Agent, ParkingLot) and In(Car, ParkingLot) and (not Parked(Car)),
+EFFECT: Parked(Car))
 
 1.7)
-Action(Drive(A, C, from, to)),
-PRECONDITION: In(A, from) and In(C, from) and Connected(to, from),
-EFFECT: In(A, to) and In(C, from) and (not Parked(C))
+Action(Drive(Car, from, to)),
+PRECONDITION: In(Agent, from) and In(Car, from) and Connected(to, from),
+EFFECT: In(Agent, to) and In(Car, from) and (not Parked(Car))
 
-1.8) 
-Action(Deliver(A, C, P)),
-PRECONDITION: PickUp(P) and In(A, P) and In(C, P),
-EFFECT: Delivered(C))
+1.8)
+Action(Deliver(Agent, Car, PickUp)),
+PRECONDITION: In(Agent, PickUp) and In(Car, PickUp),
+EFFECT: Delivered(Car))
 
 
 1.9)
@@ -39,33 +39,59 @@ The successor-state axiom solves the so-called frame problem. The frame problem 
 There are formalisms that are based on the assumption that all that is not explicitly changed by an action remains unchanged, which effectively fixes the frame problem.
 
 1.10)
-Parked(C, Result(a, s)) <=> (a = Park(A, C, Pl) and ParkingLot(Pl) and In(A, Pl) and In(C, Pl) and (not Parked(C))) or (Parked(C, s) and a != Drive(A, C, from, to) and In(C, Pl) and Connected(to, from))
+Parked(Car, Result(a, s)) <=> (a = Park(Car) and In(Agent, ParkingLot) and In(Car, ParkingLot) and (not Parked(Car))) or (Parked(Car, s) and a != Drive(Car, from, to) and In(Car, ParkingLot) and Connected(to, from))
 
-Delivered(C, Result(a,s)) <=> (a = Deliver(A, C, P) and PickUp(P) and In(A, P) and In(C, P)) or Delivered(C, s)
+Delivered(Car, Result(a,s)) <=> (a = Deliver(Agent, Car, PickUp) and In(Agent, PickUp) and In(Car, PickUp)) or Delivered(Car, s)
 
-In(X, P, Result(a,s)) <=> 
-(
-Agent(X) and Car(C) and In(X, P) and In(C, P) and a != Move(X, P, to) and a != Drive(X, C, P, to) and Connected(to, P)
-)
+In(X, P, Result(a,s)) <=>
+(In(Agent, P) and In(Car, P) and a != Move(P, to) and a != Drive(Car, P, to) and Connected(to, P))
 or
-(
-Agent(X) and Car(C) and In(X, from) and In(C, from) and a = Drive(X, C, from, P) and Connected(P, from)
-)
+(In(Agent, from) and In(Car, from) and a = Drive(Car, from, P) and Connected(P, from))
 or
-(
-Agent(X) and In(X, P) and a = a != Move(X, from, P) and Connected(P, from)
-)
-or
-(
-Car(X) and Agent(A) and In(X, P) and In(A, P) and a != Drive(A, X, P, to) and Connected(to, P)
-)
-or
-(
-Car(X) and Agent(A) and In(X, from) and In(A, from) and a = Drive(A, X, from, P) and Connected(to, P)
-)
+(In(Agent, from) and a = Move(from, P) and Connected(P, from))
+
 
 1.11)
+The negation of the goal is that for all situations s, not(Parked(Car, s)) holds. If I prove this with resolution, I reach a contradiction, which would make my goal true.
 
+My initial state is:
+
+not(Parked(C))
+
+a != Deliver(Agent, Car, PickUp) or not(PickUp(PickUp)) or or(In(Agent, PickUp)) or not(In(Car, PickUp))) or not(Delivered(Car, s)) or Delivered(Car, Result(a,s))
+
+(a != Park(Agent, Car, ParkingLot) or not(ParkingLot(ParkingLot)) or not(In(Agent, ParkingLot)) or not(In(Car, ParkingLot)) or Parked(Car) or Parked(Car, Result(a, s)))
+and
+(not(Parked(Car, s)) or a = Drive(Agent, Car, from, to) or not(In(Car, ParkingLot)) or not(Connected(to, from)) or Parked(Car, Result(a, s)))
+
+
+POSSIBILITY AXIOMS:
+PARK
+not(In(Agent, ParkingLot)) or not(In(Car, ParkingLot)) or Parked(Car)
+
+DRIVE
+not(In(Agent, from)) or not(In(Car, from)) or not(Connected(to, from)) or In(Agent, to)
+and
+not(In(Agent, from)) or not(In(Car, from)) or not(Connected(to, from)) or In(Car, from)
+and
+not(In(Agent, from)) or not(In(Car, from)) or not(Connected(to, from)) or (not Parked(Car))
+
+
+
+not(In(Agent, ParkingLot)) or not(In(Car, ParkingLot)) or Parked(Car)                        not(Parked(Car))
+~
+not(In(Agent, from)) or not(In(Car, from)) or not(Connected(to, from)) or In(Car, from)      not(In(Agent, ParkingLot)) or not(In(Car, ParkingLot))
+~
+Connected(DropOff, ParkingLot) 								  not(In(Agent, ParkingLot)) or not(Connected(to, ParkingLot))
+~
+not(In(Agent, from)) or not(In(Car, from)) or not(Connected(to, from)) or In(Agent, to)	  not(In(Agent, ParkingLot))
+~
+Connected(ParkingLot, DropOff) 								  not(In(Agent, from)) or not(In(Car, from)) or not(Connected(ParkingLot, from))
+~
+not(In(Agent, DropOff)) or not(In(Car, DropOff))						  In(Agent, DropOff)
+~
+not(In(Car, DropOff))										  In(Car, DropOff)
+~
 
 --------------------
 Answers to parts 2 and 3 should be included in the appropriate domain-*.pl and instance-*.pl files.
