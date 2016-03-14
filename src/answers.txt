@@ -14,17 +14,17 @@
 1.4) Connected(DropOff, ParkingLot) and Connected(ParkingLot, DropOff) and Connected(ParkingLot, PickUp) and Connected(PickUp, ParkingLot) and In(Car, DropOff) and In(Agent, DropOff) and (not Parked(Car)) and (not Delivered(Car)) ?????
 
 1.5)
-Action(Move(from, to),
+Action(Move(Agent, from, to),
 PRECONDITION: In(Agent, from) and Connected(to, from),
 EFFECT: In(Agent, to) and (not In(Agent, from))
 
 1.6)
-Action(Park(Car)),
+Action(Park(Agent, Car, ParkingLot)),
 PRECONDITION: In(Agent, ParkingLot) and In(Car, ParkingLot) and (not Parked(Car)),
 EFFECT: Parked(Car))
 
 1.7)
-Action(Drive(Car, from, to)),
+Action(Drive(Agent, Car, from, to)),
 PRECONDITION: In(Agent, from) and In(Car, from) and Connected(to, from),
 EFFECT: In(Agent, to) and In(Car, from) and (not Parked(Car))
 
@@ -39,17 +39,16 @@ The successor-state axiom solves the so-called frame problem. The frame problem 
 There are formalisms that are based on the assumption that all that is not explicitly changed by an action remains unchanged, which effectively fixes the frame problem.
 
 1.10)
-Parked(Car, Result(a, s)) <=> (a = Park(Car) and In(Agent, ParkingLot) and In(Car, ParkingLot) and (not Parked(Car))) or (Parked(Car, s) and a != Drive(Car, from, to) and In(Car, ParkingLot) and Connected(to, from))
+Poss(a, s) => (Parked(Car, Result(a, s)) <=> (a = Park(Agent, Car, ParkingLot) and In(Agent, ParkingLot) and In(Car, ParkingLot) and (not Parked(Car))) or (Parked(Car, s) and a != Drive(Agent, Car, from, to) and In(Car, ParkingLot) and Connected(to, from)))
 
-Delivered(Car, Result(a,s)) <=> (a = Deliver(Agent, Car, PickUp) and In(Agent, PickUp) and In(Car, PickUp)) or Delivered(Car, s)
+Poss(a, s) => (Delivered(Car, Result(a,s)) <=> (a = Deliver(Agent, Car, PickUp) and In(Agent, PickUp) and In(Car, PickUp)) or Delivered(Car, s))
 
-In(X, P, Result(a,s)) <=>
-(In(Agent, P) and In(Car, P) and a != Move(P, to) and a != Drive(Car, P, to) and Connected(to, P))
+Poss(a, s) => (In(X, P, Result(a,s)) <=>
+(In(Agent, P) and In(Car, P) and a != Move(Agent, P, to) and a != Drive(Agent, Car, P, to) and Connected(to, P))
 or
-(In(Agent, from) and In(Car, from) and a = Drive(Car, from, P) and Connected(P, from))
+(In(Agent, from) and In(Car, from) and a = Drive(Agent, Car, from, P) and Connected(P, from))
 or
-(In(Agent, from) and a = Move(from, P) and Connected(P, from))
-
+(In(Agent, from) and a = Move(Agent, from, P) and Connected(P, from)))
 
 1.11)
 The negation of the goal is that for all situations s, not(Parked(Car, s)) holds. If I prove this with resolution, I reach a contradiction, which would make my goal true.
@@ -62,7 +61,7 @@ a != Deliver(Agent, Car, PickUp) or not(PickUp(PickUp)) or or(In(Agent, PickUp))
 
 (a != Park(Agent, Car, ParkingLot) or not(ParkingLot(ParkingLot)) or not(In(Agent, ParkingLot)) or not(In(Car, ParkingLot)) or Parked(Car) or Parked(Car, Result(a, s)))
 and
-(not(Parked(Car, s)) or a = Drive(Agent, Car, from, to) or not(In(Car, ParkingLot)) or not(Connected(to, from)) or Parked(Car, Result(a, s)))
+(not(Parked(Car, s)) or a = Drive(Agent, Agent, Car, from, to) or not(In(Car, ParkingLot)) or not(Connected(to, from)) or Parked(Car, Result(a, s)))
 
 
 POSSIBILITY AXIOMS:
@@ -76,7 +75,34 @@ not(In(Agent, from)) or not(In(Car, from)) or not(Connected(to, from)) or In(Car
 and
 not(In(Agent, from)) or not(In(Car, from)) or not(Connected(to, from)) or (not Parked(Car))
 
+MOVE
+not(In(Agent, from)) or not(Connected(to, from)) or In(Agent, to)
+and
+not(In(Agent, from)) or not(Connected(to, from)) and (not In(Agent, from))
 
+DELIVER
+not(In(Agent, PickUp)) or not(In(Car, PickUp)) or Delivered(Car))
+
+PARKED
+(a != Park(Agent, Car, ParkingLot) or not(In(Agent, ParkingLot)) or not(In(Car, ParkingLot)) or Parked(Car) or Parked(Car, Result(a, s)) 
+and
+(not(Parked(Car, s)) or a = Drive(Agent, Car, from, to) or In(Car, ParkingLot) or Connected(to, from) or Parked(Car, Result(a, s))
+
+DELIVERED
+(a != Deliver(Agent, Car, PickUp) or not(In(Agent, PickUp)) or not(In(Car, PickUp)) or Delivered(Car, Result(a,s))
+and
+(not(Delivered(Car, s))) or Delivered(Car, Result(a,s))
+
+IN
+(not(In(Agent, P)) or not(In(Car, P)) or a = Move(Agent, P, to) or a = Drive(Agent, Car, P, to) or not(Connected(to, P)) or In(X, P, Result(a,s))
+and
+(not(In(Agent, from)) or not(In(Car, from)) or a != not(Drive(Agent, Car, from, P)) or not(Connected(P, from)) or In(X, P, Result(a,s))
+and
+(not(In(Agent, from)) or a != not(Move(Agent, from, P)) or not(Connected(P, from)) or In(X, P, Result(a,s))
+
+
+
+(Parked(Car, Result(a, s))
 
 not(In(Agent, ParkingLot)) or not(In(Car, ParkingLot)) or Parked(Car)                        not(Parked(Car))
 ~
@@ -92,6 +118,7 @@ not(In(Agent, DropOff)) or not(In(Car, DropOff))						  In(Agent, DropOff)
 ~
 not(In(Car, DropOff))										  In(Car, DropOff)
 ~
+
 
 --------------------
 Answers to parts 2 and 3 should be included in the appropriate domain-*.pl and instance-*.pl files.

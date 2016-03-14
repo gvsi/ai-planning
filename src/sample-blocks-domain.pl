@@ -38,12 +38,12 @@ poss( move(What, Where), S ) :-		% implication poss() <= precond
 
 % -- Successor State Axioms for primitive fluents: describe the value
 % of fluent based on the previous situation and the action chosen for
-% the plan. 
+% the plan.
 
 % The general form of a successor state axiom is:
 %
 % a fluent is true in the situation resulting from applying action A
-% in situation S, if 
+% in situation S, if
 %   - action A makes the fluent true; OR
 %   - the fluent was already true in the previous situation S,
 %       AND action A will not change this fact, by making it false.
