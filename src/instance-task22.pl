@@ -10,27 +10,29 @@
 % This file is a template for a problem instance: the definition of an
 % initial state and of a goal.
 
-% debug(on).	% need additional debug information at runtime?
+debug(on).	% need additional debug information at runtime?
 
 
 
 % --- Load domain definitions from an external file -------------------
 
-:- ['domain-template.pl'].		% Replace with the domain for this problem
+:- ['domain-task21.pl'].		% Replace with the domain for this problem
 
 
 
 
 % --- Definition of the initial state ---------------------------------
 
-
-
-
+connected(dropOff, parkingLot).
+connected(parkingLot, dropOff).
+connected(parkingLot, pickUp).
+connected(pickUp, parkingLot).
+in(agent, pickUp, s0).
 
 
 % --- Goal condition that the planner will try to reach ---------------
 
-goal(S) :-					% fill in the goal definition
+goal(S) :- in(agent, dropOff, S).				% fill in the goal definition
 
 
 

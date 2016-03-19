@@ -61,7 +61,7 @@ a != Deliver(Agent, Car, PickUp) or not(PickUp(PickUp)) or or(In(Agent, PickUp))
 
 (a != Park(Agent, Car, ParkingLot) or not(ParkingLot(ParkingLot)) or not(In(Agent, ParkingLot)) or not(In(Car, ParkingLot)) or Parked(Car) or Parked(Car, Result(a, s)))
 and
-(not(Parked(Car, s)) or a = Drive(Agent, Agent, Car, from, to) or not(In(Car, ParkingLot)) or not(Connected(to, from)) or Parked(Car, Result(a, s)))
+(not(Parked(Car, s)) or a = Drive(Agent,, Car, from, to) or not(In(Car, ParkingLot)) or not(Connected(to, from)) or Parked(Car, Result(a, s)))
 
 
 POSSIBILITY AXIOMS:
