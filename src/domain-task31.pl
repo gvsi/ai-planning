@@ -19,7 +19,7 @@
 %
 % :- multifile name/#, name/#, name/#, ...
 
-:- multifile in/3, connected/2, car/1, parked/2, delivered/2.
+:- multifile in/3, connected/2, car/1, parked/2, delivered/2, dirty/2.
 
 
 
@@ -33,6 +33,7 @@ primitive_action( move(_,_,_) ).
 primitive_action( park(_,_) ).
 primitive_action( drive(_,_,_,_) ).
 primitive_action( deliver(_,_) ).
+primitive_action( clean(_,_) ).
 % --- Precondition for primitive actions ------------------------------
 % describe when an action can be carried out, in a generic situation S
 %
@@ -73,7 +74,15 @@ poss(deliver(Who, What), S) :-
   Who = agent,
   car(What),
   in(Who, pickUp, S),
-  in(What, pickUp, S).
+  in(What, pickUp, S),
+  not(dirty(What, S)).
+
+poss(clean(Who, What), S) :-
+  Who = agent,
+  car(What),
+  in(Who, parkingLot, S),
+  in(What, parkingLot, S),
+  dirty(What, S).
 
 % --- Successor state axioms ------------------------------------------
 % describe the value of fluent based on the previous situation and the
@@ -89,7 +98,7 @@ poss(deliver(Who, What), S) :-
 % (a = Park(Agent, Car, ParkingLot) and In(Agent, ParkingLot) and In(Car, ParkingLot) and (not Parked(Car))) or
 % (Parked(Car, s) and a != Drive(Agent, Car, from, to) and In(Car, ParkingLot) and Connected(to, from)))
 parked(Car, result(A,S)) :-
-  A = park(agent, Car);
+  A = park(_, Car);
   parked(Car, S), not(A = drive(_, Car, _, _)).
 
 % Poss(a, s) => (Delivered(Car, Result(a,s)) <=>
@@ -126,6 +135,11 @@ in(Who, P, result(A,S)) :-
     (A = drive(_, Who, _, P);
     in(Who, P, S), not(A = drive(_, Who, _, _)))
   ).
+
+
+dirty(Car, result(A,S)) :-
+  A = park(_, Car);
+  dirty(Car, S), not(A = clean(_, Car)).
 
 % ---------------------------------------------------------------------
 % ---------------------------------------------------------------------
