@@ -19,7 +19,7 @@
 %
 % :- multifile name/#, name/#, name/#, ...
 
-:- multifile in/3, connected/2, car/1, parked/2, delivered/2, dirty/2, key/2, holdingKey/4, storedInUtilityBox/3.
+:- multifile in/3, connected/2, car/1, parked/2, delivered/2, dirty/2, key/2, holdingKey/4, storedInUtilityBox/3, occupied/3, fullParking/1.
 
 
 
@@ -34,7 +34,7 @@ primitive_action( park(_,_) ).
 primitive_action( drive(_,_,_,_,_) ).
 primitive_action( deliver(_,_) ).
 primitive_action( clean(_,_) ).
-primitive_action( grab(_,_,_) ).
+primitive_action( grab(_,_,_,_) ).
 primitive_action( store(_,_,_) ).
 
 % --- Precondition for primitive actions ------------------------------
@@ -58,7 +58,8 @@ poss(park(Who, What), S) :-
   car(What),
   not(parked(What, S)),
   in(Who, parkingLot, S),
-  in(What, parkingLot, S).
+  in(What, parkingLot, S),
+  not(fullParking(S)).
 
 % Action(Drive(Agent, Car, from, to)),
 % PRECONDITION: In(Agent, from) and In(Car, from) and Connected(to, from),
@@ -89,14 +90,15 @@ poss(clean(Who, What), S) :-
   in(What, parkingLot, S),
   dirty(What, S).
 
-poss(grab(Who, Key, Car), S) :-
+poss(grab(Who, Key, Car, Where), S) :-
   Who = agent,
-  in(Who, parkingLot, S),
   not(holdingKey(Who, _, _, S)),
   key(Key, Car),
   car(Car),
-  parked(Car, S),
-  storedInUtilityBox(Key, Car, S).
+  (
+  (parked(Car, S), storedInUtilityBox(Key, Car, S), in(Who, Where, S), Where = parkingLot) ;
+  (not(storedInUtilityBox(Key, Car, S)), in(Who, Where, S), in(Car, Where, S))
+  ).
 
 poss(store(Who, Key, Car), S) :-
   Who = agent,
@@ -115,6 +117,16 @@ poss(store(Who, Key, Car), S) :-
 parked(Car, result(A,S)) :-
   A = park(_, Car);
   parked(Car, S), not(A = drive(_, Car, _, _, _)).
+
+occupied(ParkingSpace, Car, result(A,S)) :-
+  A = park(_, Car), not(occupied(ParkingSpace, _, S)),
+  (
+  ParkingSpace = pSpace1;
+  ParkingSpace = pSpace2, occupied(pSpace1, _, S);
+  ParkingSpace = pSpace3, occupied(pSpace1, _, S), occupied(pSpace2, _, S);
+  ParkingSpace = pSpace4, occupied(pSpace1, _, S), occupied(pSpace2, _, S), occupied(pSpace3, _, S)
+  );
+  occupied(ParkingSpace, Car, S), not(A = drive(_, Car, _, _, _)).
 
 % Poss(a, s) => (Delivered(Car, Result(a,s)) <=>
 % (a = Deliver(Agent, Car, PickUp) and In(Agent, PickUp) and In(Car, PickUp))
@@ -145,11 +157,22 @@ dirty(Car, result(A,S)) :-
   dirty(Car, S), not(A = clean(_, Car)).
 
 holdingKey(Who, Key, Car, result(A,S)) :-
-  A = grab(Who, Key, Car);
+  A = grab(Who, Key, Car, _);
   holdingKey(Who, Key, Car, S), not(A = store(Who, Key, Car)), not(A = deliver(Who, Car)).
 
 storedInUtilityBox(Key, Car, result(A,S)) :-
   A = store(_, Key, Car);
-  storedInUtilityBox(Key, Car, S), not(A = grab(_, Key, Car)).
+  storedInUtilityBox(Key, Car, S), not(A = grab(_, Key, Car, _)).
+
+fullParking(result(A,S)) :-
+  A = park(_, _),
+  (
+  (not(occupied(pSpace1, _, S)), occupied(pSpace2, _, S), occupied(pSpace3, _, S), occupied(pSpace4, _, S));
+  (occupied(pSpace1, _, S), not(occupied(pSpace2, _, S)), occupied(pSpace3, _, S), occupied(pSpace4, _, S));
+  (occupied(pSpace1, _, S), occupied(pSpace2, _, S), not(occupied(pSpace3, _, S)), occupied(pSpace4, _, S));
+  (occupied(pSpace1, _, S), occupied(pSpace2, _, S), occupied(pSpace3, _, S), not(occupied(pSpace4, _, S)))
+  );
+  occupied(pSpace1, SomeCar1, S), occupied(pSpace2, SomeCar2, S), occupied(pSpace3, SomeCar3, S), occupied(pSpace4, SomeCar4, S),
+  not(A = drive(_, SomeCar1, _, _, _)), not(A = drive(_, SomeCar2, _, _, _)), not(A = drive(_, SomeCar3, _, _, _)), not(A = drive(_, SomeCar4, _, _, _)).
 % ---------------------------------------------------------------------
 % ---------------------------------------------------------------------
