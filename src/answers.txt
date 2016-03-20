@@ -62,38 +62,44 @@ not(In(Agent, ParkingLot)) or not(In(Car, ParkingLot)) or Parked(Car)
 
 DRIVE:
 not(Car) and not(In(Agent, from)) or not(In(Car, from)) or not(Connected(to, from)) or In(Agent, to)
-and
+  and
 not(In(Agent, from)) or not(In(Car, from)) or not(Connected(to, from)) or In(Car, from)
-and
+  and
 not(In(Agent, from)) or not(In(Car, from)) or not(Connected(to, from)) or not(Parked(Car))
 
 MOVE:
 not(In(Agent, from)) or not(Connected(to, from)) or In(Agent, to)
-and
+  and
 not(In(Agent, from)) or not(Connected(to, from)) and (not In(Agent, from))
 
 DELIVER:
 not(In(Agent, PickUp)) or not(In(Car, PickUp)) or Delivered(Car))
 
 PARKED:
-(a != Park(Agent, Car, ParkingLot) or not(In(Agent, ParkingLot)) or not(In(Car, ParkingLot)) or Parked(Car) or Parked(Car, Result(a, s))
-and
-(not(Parked(Car, s)) or a = Drive(Agent, Car, from, to) or In(Car, ParkingLot) or Connected(to, from) or Parked(Car, Result(a, s))
+not(a = Park(Agent, Car, ParkingLot)
+  and
+(not(Parked(Car, s)) or a = Drive(Agent, Car, from, to))
 
 DELIVERED:
-(a != Deliver(Agent, Car, PickUp) or not(In(Agent, PickUp)) or not(In(Car, PickUp)) or Delivered(Car, Result(a,s))
-and
+not(a = Deliver(Agent, Car, PickUp)) or Delivered(Car, Result(a,s))
+  and
 (not(Delivered(Car, s))) or Delivered(Car, Result(a,s))
 
 IN:
-(not(In(Agent, P)) or not(In(Car, P)) or a = Move(Agent, P, to) or a = Drive(Agent, Car, P, to) or not(Connected(to, P)) or In(X, P, Result(a,s))
-and
-(not(In(Agent, from)) or not(In(Car, from)) or a != not(Drive(Agent, Car, from, P)) or not(Connected(P, from)) or In(X, P, Result(a,s))
-and
-(not(In(Agent, from)) or a != not(Move(Agent, from, P)) or not(Connected(P, from)) or In(X, P, Result(a,s))
+not(X = Agent) or not(a = Move(X, from, p)) or In(x, p, Result(a,s)
+  and
+not(X = Agent) or not(a = Drive(X, car, from, p)) or In(x, p, Result(a,s)
+  and
+not(X = Agent) or (not(in(X, p, s)) or a = Move(X, from, to) or a = Drive(X, car, from, to)) or In(x, p, Result(a,s)
+  and
+not(car(X)) or (not(a = Drive(Agent, X, from, p)) or or In(x, p, Result(a,s)
+  and
+not(car(X)) or (not(in(car, p, s)) or a = Drive(Agent, X, p, to)) or In(x, p, Result(a,s)
 
 INITIAL STATE:
 Connected(DropOff, ParkingLot) and Connected(ParkingLot, DropOff) and Connected(ParkingLot, PickUp) and Connected(PickUp, ParkingLot) and and In(Car, DropOff) and In(Agent, DropOff).
+
+__
 
 I APPLY RESOLUTION (like in lecture slides, on the right is what I obtain from the previous operation, on the right is the rule I'm using)
 The only rules that I use come from the initial state of the system, and the park and drive axioms (which makes sense, since to have a parked car, it suffices to apply the park and drive actions)
