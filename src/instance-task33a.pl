@@ -3,7 +3,7 @@
 % ---------------------------------------------------------------------
 %
 % Write here you matriculation number (only - your name is not needed)
-% Matriculation Number: s_______
+% Matriculation Number: s1448512
 %
 %
 % ------------------------- Problem Instance --------------------------
@@ -13,21 +13,12 @@
 debug(on).	% need additional debug information at runtime?
 
 
-
 % --- Load domain definitions from an external file -------------------
 
 :- ['domain-task33.pl'].		% Replace with the domain for this problem
 
 
-
-
 % --- Definition of the initial state ---------------------------------
-
-% car(carA).
-% key(keysA, carA).
-% stored(keysA, carA, s0).
-% dirty(carA, s0).
-% in(carA, parkingLot, s0).
 
 car(carA).
 key(keysA, carA).
@@ -42,13 +33,13 @@ connected(dropOff, parkingLot).
 connected(parkingLot, dropOff).
 connected(parkingLot, pickUp).
 connected(pickUp, parkingLot).
+% two occupied parking spaces:
 occupied(pSpace1, someCar1, s0).
 occupied(pSpace2, someCar2, s0).
+
 
 % --- Goal condition that the planner will try to reach ---------------
 
 goal(S) :- storedInUtilityBox(keysA, carA, S), storedInUtilityBox(keysB, carB, S).
-% goal(S) :- in(agent, parkingLot, S).
-% goal(S) :- stored(keysA, carA, S).
 % ---------------------------------------------------------------------
 % ---------------------------------------------------------------------

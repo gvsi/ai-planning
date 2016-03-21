@@ -16,7 +16,7 @@ debug(on).	% need additional debug information at runtime?
 
 % --- Load domain definitions from an external file -------------------
 
-:- ['domain-task31.pl'].		% Replace with the domain for this problem
+:- ['domain-task32.pl'].		% Replace with the domain for this problem
 
 
 
@@ -24,22 +24,27 @@ debug(on).	% need additional debug information at runtime?
 % --- Definition of the initial state ---------------------------------
 
 car(carA).
+key(keysA, carA).
+storedInUtilityBox(keysA, carA, s0).
 dirty(carA, s0).
+parked(carA, s0).
+in(carA, parkingLot, s0).
+
 car(carB).
+key(keysB, carB).
+holdingKey(agent, keysB, carB, s0).
+in(carB, dropOff, s0).
+
+in(agent, dropOff, s0).
 connected(dropOff, parkingLot).
 connected(parkingLot, dropOff).
 connected(parkingLot, pickUp).
 connected(pickUp, parkingLot).
-in(carA, parkingLot, s0).
-parked(carA, s0).
-in(carB, dropOff, s0).
-in(agent, dropOff, s0).
 
 % --- Goal condition that the planner will try to reach ---------------
 
-goal(S) :- parked(carB, S), delivered(carA, S), in(agent, dropOff, S).
-
-
-
+goal(S) :- storedInUtilityBox(keysB, carB, S), delivered(carA, S).
+% goal(S) :- in(agent, parkingLot, S).
+% goal(S) :- stored(keysA, carA, S).
 % ---------------------------------------------------------------------
 % ---------------------------------------------------------------------

@@ -3,7 +3,7 @@
 % ---------------------------------------------------------------------
 %
 % Write here you matriculation number (only - your name is not needed)
-% Matriculation Number: s_______
+% Matriculation Number: s1448512
 %
 %
 % ------------------------- Problem Instance --------------------------
@@ -16,26 +16,21 @@ debug(on).	% need additional debug information at runtime?
 
 % --- Load domain definitions from an external file -------------------
 
-:- ['domain-task32.pl'].		% Replace with the domain for this problem
-
-
+:- ['domain-task31.pl'].		% Replace with the domain for this problem
 
 
 % --- Definition of the initial state ---------------------------------
 
+in(agent, dropOff, s0).
+
 car(carA).
-key(keysA, carA).
-stored(keysA, carA, s0).
 dirty(carA, s0).
 in(carA, parkingLot, s0).
-
-car(carB).
-key(keysB, carB).
-isHoldingKey(agent, keysB, carB, s0).
-in(carB, dropOff, s0).
 parked(carA, s0).
 
-in(agent, dropOff, s0).
+car(carB).
+in(carB, dropOff, s0).
+
 connected(dropOff, parkingLot).
 connected(parkingLot, dropOff).
 connected(parkingLot, pickUp).
@@ -43,8 +38,9 @@ connected(pickUp, parkingLot).
 
 % --- Goal condition that the planner will try to reach ---------------
 
-goal(S) :- stored(keysB, carB, S), delivered(carA, S), isHoldingKey(agent, keysA, carA, S).
-% goal(S) :- in(agent, parkingLot, S).
-% goal(S) :- stored(keysA, carA, S).
+goal(S) :- parked(carB, S), delivered(carA, S), in(agent, dropOff, S).
+
+
+
 % ---------------------------------------------------------------------
 % ---------------------------------------------------------------------

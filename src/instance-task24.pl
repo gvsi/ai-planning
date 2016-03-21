@@ -3,7 +3,7 @@
 % ---------------------------------------------------------------------
 %
 % Write here you matriculation number (only - your name is not needed)
-% Matriculation Number: s_______
+% Matriculation Number: s1448512
 %
 %
 % ------------------------- Problem Instance --------------------------
@@ -19,20 +19,21 @@ debug(on).	% need additional debug information at runtime?
 :- ['domain-task21.pl'].		% Replace with the domain for this problem
 
 
-
-
 % --- Definition of the initial state ---------------------------------
 
+in(agent, dropOff, s0).
+
 car(carA).
+in(carA, parkingLot, s0).
+parked(carA, s0).
+
 car(carB).
+in(carB, dropOff, s0).
+
 connected(dropOff, parkingLot).
 connected(parkingLot, dropOff).
 connected(parkingLot, pickUp).
 connected(pickUp, parkingLot).
-in(carA, parkingLot, s0).
-parked(carA, s0).
-in(carB, dropOff, s0).
-in(agent, dropOff, s0).
 
 % --- Goal condition that the planner will try to reach ---------------
 

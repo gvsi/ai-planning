@@ -86,15 +86,15 @@ not(a = Deliver(Agent, Car, PickUp)) or Delivered(Car, Result(a,s))
 (not(Delivered(Car, s))) or Delivered(Car, Result(a,s))
 
 IN:
-not(X = Agent) or not(a = Move(X, from, p)) or In(x, p, Result(a,s)
+not(X = Agent) or not(a = Move(X, from, p)) or In(x, p, Result(a,s))
   and
-not(X = Agent) or not(a = Drive(X, car, from, p)) or In(x, p, Result(a,s)
+not(X = Agent) or not(a = Drive(X, car, from, p)) or In(x, p, Result(a,s))
   and
-not(X = Agent) or (not(in(X, p, s)) or a = Move(X, from, to) or a = Drive(X, car, from, to)) or In(x, p, Result(a,s)
+not(X = Agent) or (not(in(X, p, s)) or a = Move(X, from, to) or a = Drive(X, car, from, to)) or In(x, p, Result(a,s))
   and
-not(car(X)) or (not(a = Drive(Agent, X, from, p)) or or In(x, p, Result(a,s)
+not(car(X)) or (not(a = Drive(Agent, X, from, p)) or or In(x, p, Result(a,s))
   and
-not(car(X)) or (not(in(car, p, s)) or a = Drive(Agent, X, p, to)) or In(x, p, Result(a,s)
+not(car(X)) or (not(in(car, p, s)) or a = Drive(Agent, X, p, to)) or In(x, p, Result(a,s))
 
 INITIAL STATE:
 Connected(DropOff, ParkingLot) and Connected(ParkingLot, DropOff) and Connected(ParkingLot, PickUp) and Connected(PickUp, ParkingLot) and and In(Car, DropOff) and In(Agent, DropOff).
